@@ -47,7 +47,7 @@ static  ShaderProgramSource ParseShader(const std::string& filepath)
 			ss[(int)type] << line << '\n';
 		}
 
-		std::cout << ss[0].str() << " this is for line" <<line<< std::endl;
+		
 	}
 	
 	return { ss[0].str(),ss[1].str() };
@@ -125,10 +125,14 @@ int main(void)
 	if (glewInit() != GLEW_OK)   // #先有window 才能init
 		std::cout << "Error glew_ok" << std::endl;
 	
-	float position[6] = {
+	float position[] = {
 		-0.5f, -0.5f,
-		0.0f, 0.5f,
-		0.5f, -0.5f
+		0.5f, -0.5f,
+		0.5f, 0.5f,
+
+		0.5f, 0.5f,
+		-0.5f, 0.5f,
+		-0.5f, -0.5f
 	};
 
 
@@ -138,7 +142,7 @@ int main(void)
 	unsigned int buffer; //opengl state machine, 每个产生的东西都有对应的地址
 	glGenBuffers(1, &buffer); //所以需要绑定
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);//绑定一个容器
-	glBufferData(GL_ARRAY_BUFFER,6*sizeof(float),position,GL_STATIC_DRAW);                                  //声明这个容器的大小
+	glBufferData(GL_ARRAY_BUFFER,6*2*sizeof(float),position,GL_STATIC_DRAW);                                  //声明这个容器的大小
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,sizeof(float)*2,0);
@@ -146,9 +150,9 @@ int main(void)
 	ShaderProgramSource source = ParseShader("Basic.shader");  // notice the file path
 	//文件夹后面才有 ‘/’ 这个是错误的  /res/shaders/Basic.shader 读不到
 	std::cout << "vertex" << std::endl;
-	std::cout << source.VertexSource<< std::endl;
+	//std::cout << source.VertexSource<< std::endl;
 	std::cout << "fragment" << std::endl;
-	std::cout << source.FragmentSource << std::endl;
+	//std::cout << source.FragmentSource << std::endl;
 
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	glUseProgram(shader);
@@ -165,7 +169,7 @@ int main(void)
 
 		*/
 		
-		glDrawArrays(GL_TRIANGLES,0,3);
+		glDrawArrays(GL_TRIANGLES,0,6);// change the points number to braw
 		/* Swap front and back buffers */
 		glfwSwapBuffers(window);
 
