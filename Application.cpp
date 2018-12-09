@@ -131,6 +131,10 @@ int main(void)
 	if (!glfwInit())
 		return -1;
 	
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_COMPAT_PROFILE );
+
 	/* Create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
 	if (!window)
@@ -157,13 +161,15 @@ int main(void)
 		0,1,2,
 		2,3,0
 	};
-
+	unsigned int vao;
+	GLCall(glGenVertexArrays(1, &vao));
+	GLCall(glBindVertexArray(vao));
 
 
 	unsigned int buffer; //opengl state machine, 每个产生的东西都有对应的地址
 	glGenBuffers(1, &buffer); //所以需要绑定
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);//绑定一个容器
-	glBufferData(GL_ARRAY_BUFFER,6*2*sizeof(float),position,GL_STATIC_DRAW);                                  //声明这个容器的大小
+	glBufferData(GL_ARRAY_BUFFER,4*2*sizeof(float),position,GL_STATIC_DRAW);                                  //声明这个容器的大小
 
 	//why must unsigned?
 	unsigned int ibo; //opengl state machine, 每个产生的东西都有对应的地址
@@ -188,6 +194,12 @@ int main(void)
 	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
 	ASSERT(location != -1);
 	GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
+	
+	GLCall(glBindVertexArray(0));
+	GLCall(glUseProgram(0));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
 
 	float r = 0.0f;
 	float increment = 0.05f;
@@ -203,7 +215,19 @@ int main(void)
 		glEnd();
 
 		*/
+
+
+		GLCall(glUseProgram(shader));
 		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+		GLCall(glBindVertexArray(vao));
+		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
+		
+
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+
+		
 	//	glDrawArrays(GL_TRIANGLES,0,6);// change the points number to braw
 		GLCall(glDrawElements(GL_TRIANGLES, 6,GL_UNSIGNED_INT,nullptr));
 		if (r > 1.0f)
