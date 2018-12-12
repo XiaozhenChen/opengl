@@ -16,10 +16,29 @@
     <Filter Include="src">
       <UniqueIdentifier>{b64b357e-9c05-46a9-bd71-b9ececa70e09}</UniqueIdentifier>
     </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{aa1c4dbb-b8fb-44db-ba6a-a266dfc8af08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="res\shaders">
+      <UniqueIdentifier>{15cbd99c-333b-425d-93f1-f8e1e25ca3ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Basic.shader">
+      <Filter>res\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Renderer.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

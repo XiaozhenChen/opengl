@@ -2,29 +2,11 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <fstream>
-#include <string>6
+#include <string>
 #include <sstream>
 
-#define ASSERT(x) if (!(x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-     x;\
-     ASSERT(GLLogCall(#x,__FILE__,__LINE__))
+#include "Renderer.h"
 
-static void GLClearError()
-{
-	while (glGetError() != GL_NO_ERROR);
-}
-
-static bool GLLogCall(const char* function, const char* file, int line)
-{
-	while (GLenum error = glGetError())
-	{
-		std::cout << "[Opengl Error] (" << error <<")"<< function<<
-			" "<<file<<":"<<line<< std::endl;
-		return false;
-	}
-	return true;
-}
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -135,6 +117,8 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_COMPAT_PROFILE );
 
+	
+
 	/* Create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
 	if (!window)
@@ -161,6 +145,7 @@ int main(void)
 		0,1,2,
 		2,3,0
 	};
+
 	unsigned int vao;
 	GLCall(glGenVertexArrays(1, &vao));
 	GLCall(glBindVertexArray(vao));
@@ -219,11 +204,10 @@ int main(void)
 
 		GLCall(glUseProgram(shader));
 		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+		
 		GLCall(glBindVertexArray(vao));
 		GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 		
-
-
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
