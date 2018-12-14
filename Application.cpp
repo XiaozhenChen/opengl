@@ -1,5 +1,6 @@
-#include <GL/glew.h>  //
+#include <GL/glew.h>  
 #include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -153,11 +154,21 @@ int main(void)
 	GLCall(glBindVertexArray(vao));
 
 	VertexBuffer vb(position, 4 * 2 * sizeof(float));//data size
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0,2,GL_FLOAT,GL_FALSE,sizeof(float)*2,0);
-
-	IndexBuffer ib(indices, 6);//data count
+	/*unsigned int buffer; //opengl state machine, 每个产生的东西都有对应的地址
+	glGenBuffers(1, &buffer); //所以需要绑定
+	glBindBuffer(GL_ARRAY_BUFFER, buffer);//绑定一个容器
+	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), position, GL_STATIC_DRAW);                                  //声明这个容器的大小
+	*/
+	GLCall(glEnableVertexAttribArray(0));
+	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+	
+	/*//why must unsigned?
+	unsigned int ibo; //opengl state machine, 每个产生的东西都有对应的地址
+	glGenBuffers(1, &ibo); //所以需要绑定
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);//绑定一个容器
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	*/
+	IndexBuffer ib(indices,6);//data count
 
 	ShaderProgramSource source = ParseShader("Basic.shader");  // notice the file path
 	
@@ -193,7 +204,8 @@ int main(void)
 		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 		
 		GLCall(glBindVertexArray(vao));
-		ib.Bind();
+		//vb.Bind(); 
+		//ib.Bind();
 		//GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
