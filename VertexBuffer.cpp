@@ -1,4 +1,5 @@
 #include "VertexBuffer.h"
+
 #include "Renderer.h"
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)
@@ -14,12 +15,12 @@ VertexBuffer::~VertexBuffer()
 	GLCall(glDeleteBuffers(1,&m_RendererID));
 }
 
-inline void VertexBuffer::Bind()
+ void VertexBuffer::Bind()const
 {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, m_RendererID));
 }
 
-inline void VertexBuffer::UnBind()
+ void VertexBuffer::UnBind()const
 {
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }

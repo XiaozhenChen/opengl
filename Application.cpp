@@ -10,6 +10,8 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
+#include "VertexArray.h"
+
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -57,7 +59,6 @@ static  ShaderProgramSource ParseShader(const std::string& filepath)
 	
 	return { ss[0].str(),ss[1].str() };
 }
-
 static unsigned int CompileShader(unsigned int type, const std::string& source) {
 
 	unsigned int id = glCreateShader(type);
@@ -88,8 +89,6 @@ static unsigned int CompileShader(unsigned int type, const std::string& source) 
 	return id;
 
 }
-
-
 static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) {
 	unsigned int program = glCreateProgram();
 	unsigned int vs = CompileShader(GL_VERTEX_SHADER,vertexShader);
@@ -106,8 +105,6 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	return program;
 }
 
-
-
 int main(void)
 {
 	GLFWwindow* window;
@@ -119,8 +116,6 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_COMPAT_PROFILE );
-
-	
 
 	/* Create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -153,14 +148,20 @@ int main(void)
 	GLCall(glGenVertexArrays(1, &vao));
 	GLCall(glBindVertexArray(vao));
 
+	VertexArray va;
+
 	VertexBuffer vb(position, 4 * 2 * sizeof(float));//data size
-	/*unsigned int buffer; //opengl state machine, 每个产生的东西都有对应的地址
+	
+	VertexBufferLayout layout;
+	layout.Push<float>(2);
+	va.AddBuffer(vb, layout);
+													 /*unsigned int buffer; //opengl state machine, 每个产生的东西都有对应的地址
 	glGenBuffers(1, &buffer); //所以需要绑定
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);//绑定一个容器
 	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), position, GL_STATIC_DRAW);                                  //声明这个容器的大小
 	*/
-	GLCall(glEnableVertexAttribArray(0));
-	GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
+	//GLCall(glEnableVertexAttribArray(0));
+	//GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 	
 	/*//why must unsigned?
 	unsigned int ibo; //opengl state machine, 每个产生的东西都有对应的地址
@@ -172,7 +173,6 @@ int main(void)
 
 	ShaderProgramSource source = ParseShader("Basic.shader");  // notice the file path
 	
-
 	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
 	GLCall(glUseProgram(shader));
 
@@ -183,7 +183,6 @@ int main(void)
 	GLCall(glBindVertexArray(0));
 	GLCall(glUseProgram(0));
 	
-
 	float r = 0.0f;
 	float increment = 0.05f;
 	/* Loop until the user closes the window */
@@ -198,14 +197,13 @@ int main(void)
 		glEnd();
 
 		*/
-
-
 		GLCall(glUseProgram(shader));
 		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 		
-		GLCall(glBindVertexArray(vao));
+		//GLCall(glBindVertexArray(vao));
+		va.Bind();
 		//vb.Bind(); 
-		//ib.Bind();
+		ib.Bind();
 		//GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 		GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
