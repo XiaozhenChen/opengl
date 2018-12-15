@@ -11,13 +11,10 @@
 #include "IndexBuffer.h"
 
 #include "VertexArray.h"
+#include "Shader.h"
 
-struct ShaderProgramSource
-{
-	std::string VertexSource;
-	std::string FragmentSource;
 
-};
+
 static  ShaderProgramSource ParseShader(const std::string& filepath)
 {
 	std::ifstream stream(filepath);
@@ -171,17 +168,27 @@ int main(void)
 	*/
 	IndexBuffer ib(indices,6);//data count
 
-	ShaderProgramSource source = ParseShader("Basic.shader");  // notice the file path
-	
-	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-	GLCall(glUseProgram(shader));
+	Shader shader("Basic.shader");
+	shader.Bind();
+	shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-	GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-	ASSERT(location != -1);
-	GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
+	va.UnBind();
+
+	vb.UnBind();
+	ib.UnBind();
+		shader.Unbind();
+		//ShaderProgramSource source = ParseShader("Basic.shader");  // notice the file path
 	
-	GLCall(glBindVertexArray(0));
-	GLCall(glUseProgram(0));
+	//unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+	//GLCall(glUseProgram(shader));
+
+	//GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+	//ASSERT(location != -1);
+	//GLCall(glUniform4f(location, 0.8f, 0.3f, 0.8f, 1.0f));
+	//GLCall(glBindBuffer(GL_ARRAY_BUFFER,0));
+	//GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+	//GLCall(glBindVertexArray(0));
+//	GLCall(glUseProgram(0));
 	
 	float r = 0.0f;
 	float increment = 0.05f;
@@ -197,8 +204,10 @@ int main(void)
 		glEnd();
 
 		*/
-		GLCall(glUseProgram(shader));
-		GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+		shader.Bind();
+		shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+		//GLCall(glUseProgram(shader));
+		//GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 		
 		//GLCall(glBindVertexArray(vao));
 		va.Bind();
@@ -226,7 +235,7 @@ int main(void)
 		/* Poll for and process events */
 		glfwPollEvents();
 	}
-	glDeleteProgram(shader);
+//	glDeleteProgram(shader);
 	glfwTerminate();
 	return 0;
 }
