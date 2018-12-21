@@ -15,6 +15,8 @@
 
 #include "Texture.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 int main(void)
 {
@@ -29,7 +31,7 @@ int main(void)
 	glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_COMPAT_PROFILE );
 
 	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+	window = glfwCreateWindow(940, 480, "Hello World", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -60,6 +62,7 @@ int main(void)
 		2,3,0
 	};
 
+	GLCall(glEnable(GL_BLEND));
 	GLCall(glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA));
 
 	//unsigned int vao;
@@ -77,9 +80,16 @@ int main(void)
 	
 	IndexBuffer ib(indices,6);//data count
 
+	glm::mat4 proj = glm::ortho(0.0f,960.0f,0.0f,540.0f,-1.0f,1.0f);
+	glm::mat4 view = glm::translate(glm::mat4(1.0f) , glm::vec3(-100, 0, 0));
+
+	glm::mat4 mvp = proj * view;
+
 	Shader shader("Basic.shader");
 	shader.Bind();
 	shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+
+	shader.SetUniformMat4f("u_MVP",proj);
 
 	Texture texture("res/texture/cxz.png");
 	texture.Bind();
